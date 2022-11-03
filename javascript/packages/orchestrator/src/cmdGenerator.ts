@@ -55,33 +55,65 @@ export async function genCumulusCollatorCmd(
 
   const colIndex = getCollatorIndex(parachainId!);
 
-  let fullCmd: string[] = [
-    nodeSetup.command || DEFAULT_COMMAND,
-    "--name",
-    name,
-    "--node-key",
-    key!,
-    "--chain",
-    `${cfgPath}/${chain}-${parachainId}.json`,
-    "--base-path",
-    dataPath,
-    "--listen-addr",
-    `/ip4/0.0.0.0/tcp/${nodeSetup.p2pPort ? nodeSetup.p2pPort : P2P_PORT}/ws`,
-    "--rpc-port",
-    (nodeSetup.rpcPort ? nodeSetup.rpcPort : RPC_HTTP_PORT).toString(),
-    "--ws-port",
-    (nodeSetup.wsPort ? nodeSetup.wsPort : RPC_WS_PORT).toString(),
-    "--prometheus-external",
-    "--prometheus-port",
-    (nodeSetup.prometheusPort
-      ? nodeSetup.prometheusPort
-      : PROMETHEUS_PORT
-    ).toString(),
-    "--rpc-cors all",
-    "--unsafe-rpc-external",
-    "--rpc-methods unsafe",
-    "--unsafe-ws-external",
-  ];
+  let binName = nodeSetup.command || DEFAULT_COMMAND;
+  let fullCmd: string[] = [];
+  if (binName == "bifrost") {
+    fullCmd = [
+      nodeSetup.command || DEFAULT_COMMAND,
+      "--name",
+      name,
+      "--node-key",
+      key!,
+      "--chain",
+      "bifrost-kusama-local",
+      "--base-path",
+      dataPath,
+      "--listen-addr",
+      `/ip4/0.0.0.0/tcp/${nodeSetup.p2pPort ? nodeSetup.p2pPort : P2P_PORT}/ws`,
+      "--rpc-port",
+      (nodeSetup.rpcPort ? nodeSetup.rpcPort : RPC_HTTP_PORT).toString(),
+      "--ws-port",
+      (nodeSetup.wsPort ? nodeSetup.wsPort : RPC_WS_PORT).toString(),
+      "--prometheus-external",
+      "--prometheus-port",
+      (nodeSetup.prometheusPort
+        ? nodeSetup.prometheusPort
+        : PROMETHEUS_PORT
+      ).toString(),
+      "--rpc-cors all",
+      "--unsafe-rpc-external",
+      "--rpc-methods unsafe",
+      "--unsafe-ws-external",
+    ];
+  } else {
+    fullCmd = [
+      nodeSetup.command || DEFAULT_COMMAND,
+      "--name",
+      name,
+      "--node-key",
+      key!,
+      "--chain",
+      `${cfgPath}/${chain}-${parachainId}.json`,
+      "--base-path",
+      dataPath,
+      "--listen-addr",
+      `/ip4/0.0.0.0/tcp/${nodeSetup.p2pPort ? nodeSetup.p2pPort : P2P_PORT}/ws`,
+      "--rpc-port",
+      (nodeSetup.rpcPort ? nodeSetup.rpcPort : RPC_HTTP_PORT).toString(),
+      "--ws-port",
+      (nodeSetup.wsPort ? nodeSetup.wsPort : RPC_WS_PORT).toString(),
+      "--prometheus-external",
+      "--prometheus-port",
+      (nodeSetup.prometheusPort
+        ? nodeSetup.prometheusPort
+        : PROMETHEUS_PORT
+      ).toString(),
+      "--rpc-cors all",
+      "--unsafe-rpc-external",
+      "--rpc-methods unsafe",
+      "--unsafe-ws-external",
+    ];
+  }
 
   if (validator) fullCmd.push(...["--collator", "--force-authoring"]);
 
